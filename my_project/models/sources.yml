@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: raw_data
+    database: KD_POC2_DB
+    schema: PUBLIC
+    tables:
+      - name: RAW_TABLE_CUSTOMERS
+      - name: RAW_TABLE_PRODUCTS
+      - name: RAW_TABLE_ORDERS

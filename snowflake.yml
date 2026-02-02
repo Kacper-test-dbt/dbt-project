@@ -1,0 +1,10 @@
+definition_version: 1
+project:
+  name: my_project
+
+type: application
+entities:
+  - name: my_dbt_project
+    type: dbt
+    path: my_project/
+    warehouse: COMPUTE_WH

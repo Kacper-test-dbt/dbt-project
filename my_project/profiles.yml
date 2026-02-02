@@ -1,0 +1,14 @@
+my_project:
+  outputs:
+    dev:
+      account: lachlti-uic73626
+      database: DBT_DATABASE
+      authenticator: oauth
+      token: "dummy"
+      role: TRANSFORM
+      schema: PUBLIC
+      threads: 1
+      type: snowflake
+      user: dbt
+      warehouse: COMPUTE_WH
+  target: dev

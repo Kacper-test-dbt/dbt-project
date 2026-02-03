@@ -1,0 +1,23 @@
+name: Sync Snowflake Repo
+
+on:
+  push:
+    branches:
+      - master 
+
+jobs:
+  update-snowflake:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install SnowSQL
+        run: |
+          curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
+          SNOWSQL_DEST=~/bin SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
+
+      - name: Run Fetch Command
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PWD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+        run: |
+          ~/bin/snowsql -a $SNOWFLAKE_ACCOUNT -u $SNOWFLAKE_USER -w YOUR_WH -d YOUR_DB -s YOUR_SCHEMA -q "ALTER GIT REPOSITORY my_dbt_repo FETCH"

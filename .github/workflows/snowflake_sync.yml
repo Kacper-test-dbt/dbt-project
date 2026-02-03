@@ -3,21 +3,45 @@ name: Sync Snowflake Repo
 on:
   push:
     branches:
-      - master 
+      - main
 
 jobs:
   update-snowflake:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest  # Use the modern runner
     steps:
-      - name: Install SnowSQL
-        run: |
-          curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
-          SNOWSQL_DEST=~/bin SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
+      - name: Set up Python
+        uses: actions/setup-python@v5 # v5 is standard in 2026
+        with:
+          python-version: '3.11'
+
+      - name: Install Snowflake Connector
+        run: pip install snowflake-connector-python
 
       - name: Run Fetch Command
         env:
           SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
           SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
-          SNOWSQL_PWD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOW_WH: YOUR_WH      # <--- Update these
+          SNOW_DB: YOUR_DB      # <--- Update these
+          SNOW_SCHEMA: PUBLIC   # <--- Update these
         run: |
-          ~/bin/snowsql -a $SNOWFLAKE_ACCOUNT -u $SNOWFLAKE_USER -w YOUR_WH -d YOUR_DB -s YOUR_SCHEMA -q "ALTER GIT REPOSITORY my_dbt_repo FETCH"
+          python -c "
+          import snowflake.connector
+          import os
+
+          print('Connecting to Snowflake...')
+          conn = snowflake.connector.connect(
+              user=os.environ['SNOWFLAKE_USER'],
+              password=os.environ['SNOWFLAKE_PASSWORD'],
+              account=os.environ['SNOWFLAKE_ACCOUNT'],
+              warehouse=os.environ['SNOW_WH'],
+              database=os.environ['SNOW_DB'],
+              schema=os.environ['SNOW_SCHEMA']
+          )
+
+          print('Triggering Git Fetch...')
+          conn.cursor().execute('ALTER GIT REPOSITORY my_dbt_repo FETCH')
+          print('Success: Repo Updated!')
+          conn.close()
+          "

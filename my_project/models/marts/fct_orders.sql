@@ -44,4 +44,4 @@ left join products p
     on p.product_id = p.product_id
     and o.order_date >= p.dbt_valid_from
     and o.order_date < coalesce(p.dbt_valid_to, '9999-12-31'::timestamp)
-    -- test
+    -- test1

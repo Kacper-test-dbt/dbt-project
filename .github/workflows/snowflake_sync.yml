@@ -18,6 +18,6 @@ jobs:
         env:
           SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
           SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
-          SNOWFLAKE_PWD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWSQL_PWD: ${{ secrets.SNOWFLAKE_PASSWORD }}
         run: |
           ~/bin/snowsql -a $SNOWFLAKE_ACCOUNT -u $SNOWFLAKE_USER -w YOUR_WH -d YOUR_DB -s YOUR_SCHEMA -q "ALTER GIT REPOSITORY my_dbt_repo FETCH"
